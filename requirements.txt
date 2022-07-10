@@ -1,5 +1,5 @@
 gunicorn
 requests==2.24.0
 pandas
-Flask~=1.0.3
+Flask==2.0.3
 
