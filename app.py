@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request
+import json
+from flask import Flask, render_template, request,jsonify
 from recommender import recommend
 
 base_html = """ 
@@ -20,6 +21,25 @@ app = Flask(__name__)
 def main():
     return render_template('index.html')
 
+@app.route('/<school_level>/<subject>/<lesson>', methods=['GET'])
+def reco(school_level,subject,lesson):
+    if (school_level == '') or (subject == '') or (lesson == ''):
+            return render_template('index.html', message='Please enter required fields')
+    else:
+        df = recommend(school_level, subject, lesson)
+        return df.to_json()
+
+@app.route('/recommend', methods=['GET','POST'])
+def reco_system():
+    if request.method == 'GET':
+        return jsonify({"response":"Get Request Called"})
+    else:
+        data = request.get_json()
+        schoollevel = data['schoollevel']
+        subject = data['subject']
+        lesson = data['lesson']
+        df = recommend(schoollevel, subject, lesson)
+        return df.to_json()
 
 @app.route('/submit', methods=['POST', 'GET'])
 def submit():
